@@ -1,2 +1,2 @@
 # Image-to-QR
-Image To Qr Code Generato
+Image To Qr Code Generator

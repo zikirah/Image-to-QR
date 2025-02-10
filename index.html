@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Image To QR Code Generator </title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <div class="container">
+        <h1> Image To QR Code Generator </h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="generateQR"> Generate QR Code </button>
+        <div id="qrCodeContainer" style="margin-top: 20px;"></div>
+
+        <div id="qrDisplay" style="margin-top: 20px; display: none;"></div>
+    </div>
+    <div style="text-align: center; color: #ecf0f1; margin-top: 20px;">
+        Created by <a href="https://github.com/zikirah" target="_blank" style="color: white; text-decoration: none;">Zikirah</a>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.getElementById('generateQR').addEventListener('click', function() {
+            // ... code to generate QR code ...
+            document.getElementById('qrDisplay').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

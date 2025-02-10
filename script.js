@@ -13,12 +13,16 @@ document.getElementById("generateQR").addEventListener("click", function() {
     fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
-            Authorization: "4947ee97fce8973" // Replace with your Imgur Client ID
+            Authorization: "Client-ID 4947ee97fce8973" // Ensure you use 'Client-ID' format if required
         },
         body: formData
     })
     .then(response => {
         if (!response.ok) {
+            if (response.status === 429) {
+                // You may show a user-friendly message or implement retry logic here.
+                throw new Error("Too many requests - please try again later.");
+            }
             throw new Error("Network response was not ok");
         }
         return response.json();
@@ -27,17 +31,15 @@ document.getElementById("generateQR").addEventListener("click", function() {
         console.log(data); // Log the response data
         if (data.success) {
             const imageUrl = data.data.link; // Get the public URL
-            console.log("Image URL:", imageUrl); // Log the image URL
-
+            console.log("Image URL:", imageUrl);
             // Generate the QR Code with the new image URL
             const qrImage = document.createElement("img");
             const qrURL = `https://quickchart.io/qr?text=${encodeURIComponent(imageUrl)}&size=200`;
-            qrImage.src = qrURL; // Set the src of the qrImage to the qrURL
-            console.log("QR Code Image Source:", qrImage.src); // Log the QR code image source
-
-            // Display the QR Code in the new container
+            qrImage.src = qrURL;
+            console.log("QR Code Image Source:", qrImage.src);
+            // Display the QR Code
             const qrDisplay = document.getElementById("qrDisplay");
-            qrDisplay.innerHTML = ""; // Clear previous QR codes
+            qrDisplay.innerHTML = "";
             qrDisplay.appendChild(qrImage);
         } else {
             alert("Error uploading image. Try again!");

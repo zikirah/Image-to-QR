@@ -1,4 +1,4 @@
-document.getElementById("generateQR").addEventListener("click", function() {
+document.getElementById("generateQR").addEventListener("click", async function() {
     const imageInput = document.getElementById("imageInput").files[0];
 
     if (!imageInput) {
@@ -9,44 +9,44 @@ document.getElementById("generateQR").addEventListener("click", function() {
     const formData = new FormData();
     formData.append("image", imageInput);
 
-    // Upload the image to Imgur
-    fetch("https://api.imgur.com/3/image", {
-        method: "POST",
-        headers: {
-            Authorization: "Client-ID 4947ee97fce8973" // Ensure you use 'Client-ID' format if required
-        },
-        body: formData
-    })
-    .then(response => {
+    try {
+        const response = await fetch("https://api.imgur.com/3/image", {
+            method: "POST",
+            headers: {
+                Authorization: "Client-ID 4947ee97fce8973" // Ensure you use 'Client-ID' format
+            },
+            body: formData
+        });
+
         if (!response.ok) {
             if (response.status === 429) {
-                // You may show a user-friendly message or implement retry logic here.
-                throw new Error("Too many requests - please try again later.");
+                throw new Error("Too many requests - please wait and try again later.");
             }
-            throw new Error("Network response was not ok");
+            throw new Error(`Upload failed! Server responded with status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data); // Log the response data
-        if (data.success) {
-            const imageUrl = data.data.link; // Get the public URL
-            console.log("Image URL:", imageUrl);
-            // Generate the QR Code with the new image URL
-            const qrImage = document.createElement("img");
-            const qrURL = `https://quickchart.io/qr?text=${encodeURIComponent(imageUrl)}&size=200`;
-            qrImage.src = qrURL;
-            console.log("QR Code Image Source:", qrImage.src);
-            // Display the QR Code
-            const qrDisplay = document.getElementById("qrDisplay");
-            qrDisplay.innerHTML = "";
-            qrDisplay.appendChild(qrImage);
-        } else {
-            alert("Error uploading image. Try again!");
+
+        const data = await response.json();
+        console.log("API Response:", data);
+
+        if (!data || !data.success || !data.data.link) {
+            throw new Error("Failed to upload image. Please try again!");
         }
-    })
-    .catch(error => {
+
+        const imageUrl = data.data.link;
+        console.log("Uploaded Image URL:", imageUrl);
+
+        // Generate QR Code
+        const qrImage = document.createElement("img");
+        const qrURL = `https://quickchart.io/qr?text=${encodeURIComponent(imageUrl)}&size=200`;
+        qrImage.src = qrURL;
+
+        // Display the QR Code
+        const qrDisplay = document.getElementById("qrDisplay");
+        qrDisplay.innerHTML = "";
+        qrDisplay.appendChild(qrImage);
+
+    } catch (error) {
         console.error("Upload error:", error);
-        alert("An error occurred: " + error.message);
-    });
+        alert("Error: " + error.message);
+    }
 });
